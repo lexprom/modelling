@@ -14,7 +14,7 @@ class ExpectedValueDiscrete extends Component {
 	}
 
 	calculateExpectedValues = () => {
-		const details = [0, 0, 1, 1, 1, 2, 2, 2, 2, 3]; // odds of details
+		const details = [0, 0, 1, 1, 1, 2, 2, 2, 2, 3]; // odds of the details
 		const resultsExpectedValues = [];
 		for (let index = 0; index < NUMBER_OF_EXPERIMENTS; index++) {
 			let temp = 0;
