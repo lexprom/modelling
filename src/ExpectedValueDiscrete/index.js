@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import Image from "./assets/task3.png"
 
-const NUMBER_OF_EXPERIMENTS = 1000;
+const NUMBER_OF_EXPERIMENTS = 10000;
 const MIN_NUMBER_OF_DETAILS = 5;
 
 class ExpectedValueDiscrete extends Component {
