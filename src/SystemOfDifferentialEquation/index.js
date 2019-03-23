@@ -6,34 +6,12 @@ import "./styles.css"
 import { FunctionX, FunctionY } from "./utils/func";
 
 const chart = {
-  labels: [...Array(101).keys()],
   datasets: [
     {
-      label: "X",
       fill: false,
       lineTension: 0.1,
       backgroundColor: 'rgba(75,192,192,0.4)',
       borderColor: 'rgba(75,192,192,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(75,192,192,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-    },
-    {
-      label: "Y",
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(192, 38, 128, 1)',
-      borderColor: 'rgba(230, 127, 187, 1)',
       borderCapStyle: 'butt',
       borderDash: [],
       borderDashOffset: 0.0,
@@ -55,7 +33,7 @@ export default class SoDE extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      K: "",
+      K: "1",
       X: [],
       Y: []
     }
@@ -66,35 +44,34 @@ export default class SoDE extends Component {
   }
 
   calculateFunction = () => {
-    let x;
-    let y;
+    this.state.X.splice(0, this.state.X.length);
+    this.state.Y.splice(0, this.state.Y.length);
+    this.setState({ K: "" })
+    const { X, Y, K } = this.state;
     let t = 0;
-    const { K, X, Y } = this.state;
+    let a = 10; // x'
+    let b = 10; // y'
+    let x = 1;
+    let y = 1;
+    let xFromT = a * t + x;
+    let yFromT = b * t + y;
 
-    // X loop
-    let xT;
-    for (let i = 1; i < 100; i++) {
-      x = y = i;
-      xT = FunctionX(x, y, +K);
-      X.push(xT);
+    for (let index = 0; index < 100; index++) {
+      let tempA = FunctionX(xFromT, yFromT, +K, t, a);
+      xFromT = tempA * t + xFromT;
+      a = tempA;
+
+      let tempB = FunctionY(xFromT, yFromT, +K, t, b);
+      yFromT = tempB * t + yFromT;
+      b = tempB;
+
       t += .1;
+      X.push(xFromT.toFixed(2));
+      Y.push(yFromT);
     }
-    this.setState({ X: this.state.X });
-    chart.datasets[0].data = this.state.X;
-    console.log(this.state.X);
-
-    t = 0;
-
-    // Y loop
-    let yT;
-    for (let i = 1; i < 100; i++) {
-      x = y = i;
-      yT = FunctionY(x, y, +K);
-      Y.push(xT);
-      t += .1;
-    }
-    this.setState({ Y: this.state.Y });
-    chart.datasets[1].data = this.state.Y;
+    this.setState({ X: this.state.X, Y: this.state.Y })
+    chart.datasets[0].data = this.state.Y;
+    chart.labels = this.state.X;
   }
 
   render() {
@@ -102,7 +79,7 @@ export default class SoDE extends Component {
       <div className="Container">
         <h1>Task 2</h1>
         <img src={Image} height="300px" width="550px" alt="help" />
-        <Line data={chart} redraw />
+        <Line options={{ legend: { display: false } }} data={chart} redraw />
         <div>
           K=
             <input value={this.state.K} onChange={this.onChange} name="K" />
